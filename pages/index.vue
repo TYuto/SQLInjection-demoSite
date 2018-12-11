@@ -43,6 +43,7 @@ export default {
   methods: {
     runquery: function(querry) {
       this.querrys += querry + "\n\n"
+      this.querrys = this.querrys.split('\n').slice(-10).join('\n') 
       let res = this.db.exec(querry)
       console.log(res)
       return res
