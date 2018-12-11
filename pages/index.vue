@@ -21,8 +21,8 @@
       <vue-bootstrap-typeahead 
         v-model="tablename"
         :data="tables"
+        :min-matching-chars="0"
         placeholder="table名"
-        min-matching-chars="0"
         @keydown.enter.native="selectall"/>
       <b-card class="mx-2 my-2">
         <b-table
@@ -97,7 +97,6 @@ export default {
       sqlstr += "INSERT INTO USERS VALUES (0, 'admin','passwordhoge');\n"
       sqlstr += "INSERT INTO USERS VALUES (1, 'user1', 'passpass');"
       this.runquery(sqlstr)
-      let res = this.runquery("SELECT * FROM USERS;");
     },
     selectall: function(){
       let res = this.runquery("SELECT * FROM " + this.tablename + ';');
