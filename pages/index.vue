@@ -18,9 +18,11 @@
     </b-card>
     <b-card class="mx-2 my-2">
       <h4>tableの表示</h4>
-      <b-input
+      <vue-bootstrap-typeahead 
         v-model="tablename"
+        :data="tables"
         placeholder="table名"
+        min-matching-chars="0"
         @keydown.enter.native="selectall"/>
       <b-card class="mx-2 my-2">
         <b-table
@@ -39,7 +41,12 @@
 
 <script>
 const sql = require('sql.js')
+import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
+
 export default {
+  components: {
+    VueBootstrapTypeahead
+  },
   data: function() {
     return {
       sqlquerry: '',
@@ -60,17 +67,20 @@ export default {
   methods: {
     formatlabe: function(arr) {
       let rarr = {}
-      console.log(arr)
       for (let i = 0; i<arr.length;i++){
         rarr[i] = {label: arr[i]}
       }
-      console.log(rarr)
       return rarr
     },
     runquery: function(querry) {
       this.querrys += querry + "\n\n"
       this.querrys = this.querrys.split('\n').slice(-17).join('\n') 
       let res = this.db.exec(querry)
+      let tables = this.db.exec("select name from sqlite_master where type='table';")
+      let ts = []
+      tables[0].values.forEach(c => ts.push(c[0]))
+      this.tables = ts
+      console.log(this.tables)
       console.log(res)
       return res
     },
