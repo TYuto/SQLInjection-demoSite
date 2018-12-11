@@ -1,40 +1,62 @@
 
 <template>
   <section>
-    <b-button
-      class="mx-2 my-2"
-      @click="resetdb">データベースのリセット</b-button>
     <b-card class="mx-2 my-2">
-      <h4>sqlの実行</h4>
-      <b-input
-        v-model="sqlquerry"
-        placeholder="sql"
-        @keydown.enter.native="goquerry"/>
-      <b-card class="mx-2 my-2">
-        <b-table
-          :items="itemeonece"
-          :fields="fieldonece"/>
+      <h2>アプリケーション本体</h2>
+      <b-card v-if="isLogin">
+        <p>Hello {{ username }} </p>
+        <b-button @click="isLogin = false">logout</b-button>
+      </b-card>
+      <b-card v-else>
+        <b-input
+          v-model="usernameInput"
+          placeholder="username"
+          @keydown.enter.native="goquerry"/>
+        <b-input
+          v-model="passwordInput"
+          type="password"
+          placeholder="password"/>
+        <b-button @click="login">login</b-button>
+        <b-alert :show="message!=''">{{ message }}</b-alert>
       </b-card>
     </b-card>
     <b-card class="mx-2 my-2">
-      <h4>tableの表示</h4>
-      <vue-bootstrap-typeahead 
-        v-model="tablename"
-        :data="tables"
-        :min-matching-chars="0"
-        placeholder="table名"
-        @keydown.enter.native="selectall"/>
+      <h2>デバッグ用</h2>
+      <b-button
+        class="mx-2 my-2"
+        @click="resetdb">データベースのリセット</b-button>
       <b-card class="mx-2 my-2">
-        <b-table
-          :items="items"
-          :fields="fields"/>
+        <h4>sqlの実行</h4>
+        <b-input
+          v-model="sqlquerry"
+          placeholder="sql"
+          @keydown.enter.native="goquerry"/>
+        <b-card class="mx-2 my-2">
+          <b-table
+            :items="itemeonece"
+            :fields="fieldonece"/>
+        </b-card>
       </b-card>
-    </b-card>
-    <b-card class="mx-2 my-2">
-      <h4>実行されたsql</h4>
-      <p 
-        style="white-space: pre;"
-        v-text="querrys"/>
+      <b-card class="mx-2 my-2">
+        <h4>tableの表示</h4>
+        <vue-bootstrap-typeahead 
+          v-model="tablename"
+          :data="tables"
+          :min-matching-chars="0"
+          placeholder="table名"
+          @keydown.enter.native="selectall"/>
+        <b-card class="mx-2 my-2">
+          <b-table
+            :items="items"
+            :fields="fields"/>
+        </b-card>
+      </b-card>
+      <b-card class="mx-2 my-2">
+        <h4>実行されたsql</h4>
+        <p 
+          style="white-space: pre;"
+          v-text="querrys"/>
+      </b-card>
     </b-card>
   </section>
 </template>
@@ -58,7 +80,11 @@ export default {
       tablename: '',
       itemeonece: [],
       fieldonece: {},
-      tables: []
+      tables: [],
+      isLogin: false,
+      usernameInput: '',
+      passwordInput: '',
+      message: ''
     }
   },
   created: function() {
@@ -103,6 +129,16 @@ export default {
       this.items = []
       this.items = res[0].values
       this.fields = this.formatlabe(res[0].columns)
+    },
+    login: function() {
+      let user = this.runquery('SELECT username FROM USERS WHERE username="'+this.usernameInput+'" and password="'+this.passwordInput+'"')
+      if(typeof user[0] !== "undefined") {
+        this.isLogin = true
+        this.username = user[0].values[0][0]
+      } else{
+        this.message = "パスワード又はユーザー名が間違っています"
+        console.log(this.message)
+      }
     }
   }
 }
