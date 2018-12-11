@@ -5,7 +5,9 @@
       <h2>アプリケーション本体</h2>
       <b-card v-if="isLogin">
         <p>Hello {{ username }} </p>
-        <b-button @click="isLogin = false">logout</b-button>
+        <b-button
+          variant="info"
+          @click="isLogin = false">logout</b-button>
       </b-card>
       <b-card v-else>
         <b-input
@@ -16,14 +18,19 @@
           v-model="passwordInput"
           type="password"
           placeholder="password"/>
-        <b-button @click="login">login</b-button>
-        <b-alert :show="message!=''">{{ message }}</b-alert>
+        <b-button
+          variant="info"
+          @click="login">login</b-button>
+        <b-alert
+          :show="message!=''"
+          variant="danger">{{ message }}</b-alert>
       </b-card>
     </b-card>
     <b-card class="mx-2 my-2">
       <h2>デバッグ用</h2>
       <b-button
         class="mx-2 my-2"
+        variant="info"
         @click="resetdb">データベースのリセット</b-button>
       <b-card class="mx-2 my-2">
         <h4>sqlの実行</h4>
@@ -135,8 +142,9 @@ export default {
       if(typeof user[0] !== "undefined") {
         this.isLogin = true
         this.username = user[0].values[0][0]
+        this.message = ''
       } else{
-        this.message = "パスワード又はユーザー名が間違っています"
+        this.message = "ユーザー名又はパスワードが間違っています"
         console.log(this.message)
       }
     }
