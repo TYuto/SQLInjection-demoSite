@@ -120,8 +120,8 @@ export default {
     resetdb: function() {
       this.db = new sql.Database();
       let sqlstr = "CREATE TABLE USERS (id int, username char, password char);\n";
-      sqlstr += "INSERT INTO USERS VALUES (0, 'admin','passwordhoge');\n"
-      sqlstr += "INSERT INTO USERS VALUES (1, 'user1', 'passpass');"
+      sqlstr += "INSERT INTO USERS VALUES (0, 'admin','adminpassword');\n"
+      sqlstr += "INSERT INTO USERS VALUES (1, 'normaluser', 'userpassword');"
       this.runquery(sqlstr)
     },
     selectall: function(){
