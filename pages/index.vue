@@ -1,66 +1,53 @@
+
 <template>
-  <section class="container">
-    <div>
-      <logo/>
-      <h1 class="title">
-        SQLInjection-demoSite
-      </h1>
-      <h2 class="subtitle">
-        sql injextion demo site
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green">Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey">GitHub</a>
-      </div>
-    </div>
+  <section>
+    <b-card class="">
+      <b-card class="">
+        <p> {{ stdout }} </p>
+        <b-table :items="items"/>
+      </b-card>
+      <b-input
+        v-model="sqlquerry"
+        @keydown.enter.native="goquerry"/>
+    </b-card>
   </section>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-
+const sql = require('sql.js')
 export default {
-  components: {
-    Logo
+  data: function() {
+    return {
+      sqlquerry: '',
+      db: {},
+      stdout: '',
+      items: []
+    }
+  },
+  created: function() {
+    this.db = new sql.Database();
+    this.resetdb()
+  },
+  methods: {
+    goquerry: function(){
+      let querry = this.sqlquerry
+      let res = this.db.exec(querry)
+      console.log(res)
+      this.items = res[0].values
+      console.log(this.items)
+      this.sqlquerry = ''
+    },
+    resetdb: function() {
+      let sqlstr = "CREATE TABLE users (id int, username char, password char);";
+      sqlstr += "INSERT INTO users VALUES (0, 'admin','passwordhoge');"
+      sqlstr += "INSERT INTO users VALUES (1, 'user1', 'passpass');"
+      this.db.run(sqlstr);
+      let res = this.db.exec("SELECT * FROM users");
+      console.log(res)
+    }
   }
 }
 </script>
 
 <style>
-
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
 </style>
